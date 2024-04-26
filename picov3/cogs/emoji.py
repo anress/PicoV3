@@ -10,7 +10,7 @@ import io
 from unidecode import unidecode
 
 from ..constants import HEADERS, GENERIC_ERROR_MESSAGE
-from ..helpers import getRaiderIOBaseUrlPerChar, normalizeRealmName
+from ..helpers import getRaiderIOBaseUrlPerChar
 from ..bot import client
 from ..models import Character
 
@@ -45,7 +45,7 @@ async def add(interaction: discord.Interaction, character_name: str, realm: str)
             return
 
         character_name = character_name.capitalize()
-        realm = normalizeRealmName(realm)
+        realm = realm
 
         response = requests.get(getRaiderIOBaseUrlPerChar(character_name, realm), headers=HEADERS)
 

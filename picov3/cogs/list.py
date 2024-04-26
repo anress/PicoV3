@@ -16,7 +16,7 @@ async def list(interaction: discord.Interaction):
         await interaction.response.defer(thinking=True)
 
         character_string = "Your characters:\n\n"
-        for db_entry in Character.select().where((Character.guild_id == interaction.guild.id) and (Character.user_id == interaction.user.id)).order_by(Character.realm):
+        for db_entry in Character.select().where((Character.guild_id == interaction.guild.id) & (Character.user_id == interaction.user.id)).order_by(Character.realm):
             db_entry: Character
             emojiString = ""
             if db_entry.emoji_id:

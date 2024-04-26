@@ -4,7 +4,6 @@ from pathlib import Path
 from playhouse.migrate import SqliteMigrator, migrate
 from picov3.models import BOT_DB, Character, Guild, MPlusRun, CharacterRun
 from picov3.pico_models import PICO_DB, MPlusRuns, Characters
-from picov3.helpers import normalizeRealmName
 
 migrator = SqliteMigrator(PICO_DB)
 
@@ -17,15 +16,10 @@ migrator = SqliteMigrator(PICO_DB)
 # )
 
 
-for char in Characters.select():
-    char: Characters
-    realm = normalizeRealmName(char.realm)
+for char in Character.select():
+    char: Character
     if "tarren" in char.realm.lower():
-        realm = "tarren-mill"
-    guildId = char.guildId
-    if guildId is None:
-        guildId = 860106409839689728
-    Character.create(guild_id=guildId, realm=realm, name=char.name, user_id=char.userId)
-    print(char.userId)
-    print(realm)
-    print(".-.")
+        char.realm = "Tarren Mill"
+    char.name = char.name.capitalize()
+
+    char.save()

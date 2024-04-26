@@ -6,7 +6,7 @@ import traceback
 from discord import app_commands
 
 from ..constants import HEADERS, GENERIC_ERROR_MESSAGE, SET_CHANNEL_MESSAGE
-from ..helpers import getRaiderIOBaseUrlPerChar, normalizeRealmName
+from ..helpers import getRaiderIOBaseUrlPerChar
 from ..bot import client
 from ..models import Character, Guild
 
@@ -27,8 +27,8 @@ async def add(interaction: discord.Interaction, character_name: str, realm: str)
             )
             return
     
-        character_name = character_name.capitalize()
-        realm = normalizeRealmName(realm)
+        character_name = character_name
+        realm = realm
         score = 0
 
         url = (
@@ -44,15 +44,18 @@ async def add(interaction: discord.Interaction, character_name: str, realm: str)
                 )
             return
         
-        score = response.json().get('mythic_plus_scores_by_season')[0].get('scores').get('all')
+        char_info = response.json()
+        score = char_info.get('mythic_plus_scores_by_season')[0].get('scores').get('all')
+        char_name = char_info.get('name')
+        char_realm = char_info.get('realm')
     
-        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm == realm))) is not None:
+        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == char_realm) & (Character.realm == char_realm))) is not None:
             db_entry: Character
             await interaction.edit_original_response(
             content=f"This character has already been added to the track list!"
             )
             return
-        character: Character = Character.create(guild_id=interaction.guild.id, name=character_name, realm=realm, score=score, user_id=interaction.user.id)
+        character: Character = Character.create(guild_id=interaction.guild.id, name=char_name, realm=char_realm, score=score, user_id=interaction.user.id)
         await interaction.edit_original_response(
             content=f"The character `{character.name}-{character.realm}` has been added to the track list and has been assigned to <@{character.user_id}>! 🎉"
             )
@@ -73,13 +76,27 @@ async def remove(interaction: discord.Interaction, character_name: str, realm: s
     try:
         await interaction.response.defer(thinking=True)
         character_name = character_name.capitalize()
-        realm = normalizeRealmName(realm)
+        realm = realm
 
-        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm == realm))) is not None:
+        url = getRaiderIOBaseUrlPerChar(character_name, realm)
+
+        response = requests.get(url, headers=HEADERS)
+
+        if not response.ok:
+            await interaction.edit_original_response(
+                    content=f"A character by the name `{character_name}-{realm}` doesn't exist. Maybe check your spelling? 😢"
+                )
+            return
+        
+        char_info = response.json()
+        char_name = char_info.get('name')
+        char_realm = char_info.get('realm')
+
+        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == char_name) & (Character.realm == char_realm))) is not None:
             db_entry: Character
             db_entry.delete_instance()
             await interaction.edit_original_response(
-                content=f"The character `{character_name}-{realm}` has been removed from the list. 💥"
+                content=f"The character `{char_name}-{char_realm}` has been removed from the list. 💥"
             )
         else:            
             await interaction.edit_original_response(

@@ -6,7 +6,7 @@ import traceback
 from discord import app_commands
 
 from ..constants import HEADERS, GENERIC_ERROR_MESSAGE
-from ..helpers import colorToNumber, getRaiderIOBaseUrlPerChar, normalizeRealmName, hasHealerSpec, hasTankSpec, nameToSlug, getSpecName
+from ..helpers import colorToNumber, getRaiderIOBaseUrlPerChar, hasHealerSpec, hasTankSpec, nameToSlug, getSpecName
 from ..bot import client
 
 import json
@@ -21,8 +21,8 @@ async def score(interaction: discord.Interaction, character_name: str, realm: st
         
         await interaction.response.defer(thinking=True)
     
-        character_name = character_name.capitalize()
-        realm = normalizeRealmName(realm)
+        character_name = character_name
+        realm = realm
 
         url = (
                 f"{getRaiderIOBaseUrlPerChar(character_name, realm)}"

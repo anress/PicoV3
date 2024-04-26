@@ -3,7 +3,7 @@ import peewee as pw
 from pathlib import Path
 
 # database is created in parent directory of this file
-BOT_DB = pw.SqliteDatabase(Path(__file__).parent.parent / 'picov3.db')
+BOT_DB = pw.SqliteDatabase(Path(__file__).parent.parent / 'discordbot.db')
 
 class Guild(pw.Model):
     guild_id = pw.IntegerField(null=False, unique=True)

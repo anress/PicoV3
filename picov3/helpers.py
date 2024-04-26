@@ -26,9 +26,6 @@ def getRaiderIOLinkUrlPerChar(character_name, realm):
 def nameToSlug(name):
     return string.capwords(name).replace("'", '').replace(":", '').replace(' ', '-')
 
-def normalizeRealmName(realm):
-    return realm.replace("'", '').replace(":", '').replace(' ', '-').lower()
-
 def getDungeonImageUrl(dungeonName, expansion):
     return f"https://cdnassets.raider.io/images/dungeons/expansion{expansion}/base/{nameToSlug(dungeonName)}.jpg"
 
@@ -79,7 +76,6 @@ def colorToNumber(color):
     return int(color, 16)
 
 def checkIfNewMilestone(score_old, score_new):
-    print(score_old)
     if score_old < 750 and score_new >= 750:
         return "Keystone Explorer"
     elif score_old < 1500 and score_new >= 1500:

@@ -73,7 +73,6 @@ class Scheduler:
             traceback.print_exc()      
 
 async def get_recent_mplus_runs(character: Character, channel: discord.TextChannel, guild_id):
-    print(character.name)
     url = f"{RAIDER_IO_BASE_URL}&realm={character.realm}&name={character.name}&fields=mythic_plus_recent_runs"
     async with aiohttp.ClientSession() as session:
         for retries in range(3):
@@ -175,8 +174,8 @@ def generate_run_embed(mplusrun, url, guild_id):
         char = character.get('character')
 
         name = char.get('name')
-        realm = char.get('realm').get('slug')
-
+        realm = char.get('realm').get('name')
+ 
         tracked_char = ""
 
         if (db_entry := Character.get_or_none((Character.guild_id == guild_id) & (Character.name == name) & (Character.realm == realm))) is not None:
