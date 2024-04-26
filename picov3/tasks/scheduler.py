@@ -31,7 +31,7 @@ class Scheduler:
         print("My task is running!")
         logging.info("This runs!")
         try:
-            print(f'Checking for new M+ runs')
+            logging.info("Checking for new M+ runs")
            
             for db_entry_guild in Guild.select():
                 db_entry_guild: Guild
@@ -42,7 +42,8 @@ class Scheduler:
                     for db_entry in Character.select().where(Character.guild_id == db_entry_guild.guild_id):
                         db_entry: Character
                         await get_recent_mplus_runs(db_entry, runs_channel, db_entry_guild.guild_id)
-                        
+                       
+                        logging.info("---- " + db_entry.name + " ----")
                         url = (f"{getRaiderIOBaseUrlPerChar(db_entry.name, db_entry.realm)}"
                                 "&fields=mythic_plus_scores_by_season%3Acurrent"
                             )
@@ -57,12 +58,15 @@ class Scheduler:
                             if db_entry_guild.score_channel_id is not None:                                
                                 score_channel: discord.TextChannel = await guild.fetch_channel(db_entry_guild.score_channel_id)
                              
+                                if score_old is None:
+                                    score_old = 0
                                 achievement = checkIfNewMilestone(score_old, score_new)
                                 if achievement is not None:
                                     embed = createScoreEmbed(response.json(), db_entry, achievement, score_all)                                    
                                     await score_channel.send(embed=embed) 
                             db_entry.score = score_new
                             db_entry.save()
+            logging.info("Finished checking all characters")
                                                     
         except:                           
             logging.error(f"Unexpected error in message loop")   
@@ -227,8 +231,6 @@ def generate_run_embed(mplusrun, url, guild_id):
     return embed
    
 def createScoreEmbed(response, character: Character, achievement, score_all):
-    with open('char.json', 'w') as f:
-        json.dump(response, f, indent=4)  
     
     embed_text = f"<@{character.user_id}>'s {response.get('active_spec_name')} {response.get('class')} **[{response.get('name')}]({response.get('profile_url')})** just hit **{score_all.get('score')}** Score! \n\n Congrats on \n# {achievement} 🥳"
     embed: discord.Embed = discord.Embed(title="New M+ Milestone!", description=embed_text, color=colorToNumber(score_all.get('color')))
