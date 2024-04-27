@@ -36,7 +36,7 @@ class Scheduler:
             for db_entry_guild in Guild.select():
                 db_entry_guild: Guild
                 if db_entry_guild.runs_channel_id is not None:                 
-                    logging.info(db_entry_guild.guild_id)   
+                    logging.info(f"Guild: {db_entry_guild.guild_id}")   
                     guild: discord.Guild = await self.client.fetch_guild(db_entry_guild.guild_id)
                     runs_channel: discord.TextChannel = await guild.fetch_channel(db_entry_guild.runs_channel_id)
                     for db_entry in Character.select().where(Character.guild_id == db_entry_guild.guild_id):
@@ -101,8 +101,9 @@ async def get_recent_mplus_runs(character: Character, channel: discord.TextChann
                 
                 # check if run has been previously posted already
                 if (db_entry_run := MPlusRun.get_or_none((MPlusRun.guild_id == character.guild_id) & (MPlusRun.run_id == run_id))) is not None:                    
-                    logging.info("Run was previously already added")
+                    logging.info(f"Run {db_entry_run.run_id} was previously already added")
                 else: 
+                    logging.info(f"Adding run {run_id}")
                     url = f"{LINK_BASE_URL}/api/v1/mythic-plus/run-details?season={season}&id={run_id}"
                     response = requests.get(url, headers=HEADERS)
                     if not response.ok:
@@ -180,10 +181,12 @@ def generate_run_embed(mplusrun, url, guild_id):
 
         if (db_entry := Character.get_or_none((Character.guild_id == guild_id) & (Character.name == name) & (Character.realm == realm))) is not None:
             db_entry: Character
+            
             if db_entry.emoji_id:
                 tracked_char = f" <:{db_entry.emoji_name}:{db_entry.emoji_id}> "
-               
-            tracked_char = tracked_char + f" - <@{db_entry.user_id}>"
+
+            if db_entry.user_id:                
+                tracked_char = tracked_char + f" - <@{db_entry.user_id}>"
             character_run: CharacterRun = CharacterRun.create(run_id=keystone_run_id, character_id=db_entry.id, guild_id=guild_id)
 
         

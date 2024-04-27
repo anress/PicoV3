@@ -40,9 +40,12 @@ async def listAll(interaction: discord.Interaction):
         for db_entry in Character.select().where(Character.guild_id == interaction.guild.id).order_by(Character.realm):
             db_entry: Character
             emojiString = ""
+            userString = ""
             if db_entry.emoji_id:
                 emojiString = f" <:{db_entry.emoji_name}:{db_entry.emoji_id}> "
-            character_string = character_string + f"- `{db_entry.name}-{string.capwords(db_entry.realm.replace('-', ' '))}`  {emojiString} <@{db_entry.user_id}>\n"
+            if db_entry.user_id:
+                userString = f" <@{db_entry.user_id}>"
+            character_string = character_string + f"- `{db_entry.name}-{string.capwords(db_entry.realm.replace('-', ' '))}`  {emojiString}{userString}\n"
         await send_long_message(message=character_string, interaction=interaction)
     except:
         await interaction.edit_original_response(
