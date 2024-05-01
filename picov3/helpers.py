@@ -68,7 +68,7 @@ def getPercentRemainingString(time_remaining_ms, keystone_time_ms):
         return str(round(percentRemaining, 2))
     else:
         percentRemaining = percentRemaining * -1
-        str(round(percentRemaining, 2))
+        return str(round(percentRemaining, 2))
 
 def colorToNumber(color):
     color = color[1:]
