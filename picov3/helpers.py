@@ -56,11 +56,16 @@ def format_ms(ms):
     seconds = int(seconds)
     minutes =(ms/(1000*60))%60
     minutes = int(minutes)
+    hours = ((ms / (1000*60*60)) % 24)
+    hours = int(hours)
 
     seconds = f"{seconds:02d}"
     minutes = f"{minutes:02d}"
 
-    return f"{minutes}:{seconds}"
+    if hours > 0:
+        hours = f"{hours:02d}"
+        return f"{hours}:{minutes}:{seconds} h"
+    return f"{minutes}:{seconds} min"
 
 def getPercentRemainingString(time_remaining_ms, keystone_time_ms):
     percentRemaining = (time_remaining_ms/keystone_time_ms) * 100

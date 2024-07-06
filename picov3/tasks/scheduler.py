@@ -41,9 +41,10 @@ class Scheduler:
                     runs_channel: discord.TextChannel = await guild.fetch_channel(db_entry_guild.runs_channel_id)
                     for db_entry in Character.select().where(Character.guild_id == db_entry_guild.guild_id):
                         db_entry: Character
+                        
+                        logging.info("---- " + db_entry.name + " ----")
                         await get_recent_mplus_runs(db_entry, runs_channel, db_entry_guild.guild_id)
                        
-                        logging.info("---- " + db_entry.name + " ----")
                         url = (f"{getRaiderIOBaseUrlPerChar(db_entry.name, db_entry.realm)}"
                                 "&fields=mythic_plus_scores_by_season%3Acurrent"
                             )
@@ -161,7 +162,7 @@ def generate_run_embed(mplusrun, url, guild_id):
     if num_chests > 0:
         embed_text = embed_text + f"({percent} % remaining - keystone level upgraded by {num_chests})"
     else:
-        embed_text = embed_text + f"({time_remaining_ms} % over)"
+        embed_text = embed_text + f"({percent} % over)"
     
     embed_text = embed_text + f" for {score} points."
 
