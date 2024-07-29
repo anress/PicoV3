@@ -109,10 +109,10 @@ async def get_recent_mplus_runs(character: Character, channel: discord.TextChann
                     response = requests.get(url, headers=HEADERS)
                     if not response.ok:
                         logging.error("Couldnt fetch run details")
-                        return
-                    embed = generate_run_embed(response.json(), link, guild_id)
-                    mentions = discord.AllowedMentions(users=False)
-                    await channel.send(embed=embed, allowed_mentions=mentions)  
+                    else:
+                        embed = generate_run_embed(response.json(), link, guild_id)
+                        mentions = discord.AllowedMentions(users=False)
+                        await channel.send(embed=embed, allowed_mentions=mentions)  
             except:
                 logging.error(f"Unexpected Error for run {link}")
                 traceback.print_exc()    

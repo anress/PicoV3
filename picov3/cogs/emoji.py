@@ -55,7 +55,8 @@ async def add(interaction: discord.Interaction, character_name: str, realm: str)
                 )
             return
         
-        image_url = response.json().get('thumbnail_url')
+        char_info = response.json()
+        image_url = char_info.get('thumbnail_url')
         with urllib.request.urlopen(image_url) as url:
             img = Image.open(url)
             resizedImg = img.resize((128, 128))
@@ -63,6 +64,7 @@ async def add(interaction: discord.Interaction, character_name: str, realm: str)
             resizedImg.save(img_byte_arr, format='PNG')
             img_byte_arr = img_byte_arr.getvalue()
 
+        char_realm = char_info.get('realm')
         emojiName = "char" + unidecode(character_name)
         
         existing = [emoji for emoji in interaction.guild.emojis if emoji.name == emojiName]
@@ -74,7 +76,7 @@ async def add(interaction: discord.Interaction, character_name: str, realm: str)
         await interaction.edit_original_response(content=f"Added Emoji of **{character_name}**! {emoji} \n\n"
             f"✨  *Use it by typing* `:{emojiName}:`! ✨")
     
-        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm == realm))) is not None:
+        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm == char_realm))) is not None:
             db_entry: Character
             db_entry.emoji_id = emoji.id
             db_entry.emoji_name = emojiName
