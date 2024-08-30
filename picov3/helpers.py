@@ -5,15 +5,15 @@ import datetime
 import discord
 
 def getEmbedColorForKeystoneLevel(keystoneLevel):
-    if keystoneLevel > 20:
+    if keystoneLevel > 11:
         return 0xbd3fcf # pink
-    if keystoneLevel > 16:
+    if keystoneLevel > 7:
         return 0xff8000 # orange
-    if keystoneLevel > 13:
+    if keystoneLevel > 4:
         return 0xa335ee # purple
-    if keystoneLevel > 9:
+    if keystoneLevel > 1:
         return 0x0070dd # blue
-    if keystoneLevel > 6:
+    if keystoneLevel > 0:
         return 0x1eff00 # green
     return 0xffffff
 
