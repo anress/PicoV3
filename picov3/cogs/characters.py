@@ -85,7 +85,7 @@ async def add_character_func(interaction: discord.Interaction, character_name: s
     char_name = char_info.get('name')
     char_realm = char_info.get('realm')
 
-    if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == char_realm) & (Character.realm == char_realm))) is not None:
+    if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == char_name) & (Character.realm == char_realm))) is not None:
         db_entry: Character
         await interaction.edit_original_response(
         content=f"This character has already been added to the track list!"
@@ -106,9 +106,9 @@ async def remove(interaction: discord.Interaction, character_name: str, realm: s
     try:
         await interaction.response.defer(thinking=True)
         character_name = character_name.capitalize()
-        realm = realm.capitalize()
+        realm = realm.title()
 
-        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm == realm))) is not None:
+        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm.lower() == realm))) is not None:
             db_entry: Character
             db_entry.delete_instance()
             await interaction.edit_original_response(

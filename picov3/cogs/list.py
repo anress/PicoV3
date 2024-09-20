@@ -13,7 +13,7 @@ from ..models import Character
 @client.tree.command(name="list", description="Print a list of tracked characters that are assigned to you")
 async def list(interaction: discord.Interaction):
     try:
-        await interaction.response.defer(thinking=True)
+        await interaction.response.defer(thinking=True, ephemeral=True)
 
         character_string = "Your characters:\n\n"
         for db_entry in Character.select().where((Character.guild_id == interaction.guild.id) & (Character.user_id == interaction.user.id)).order_by(Character.realm):
@@ -34,7 +34,7 @@ async def list(interaction: discord.Interaction):
 @client.tree.command(name="list-all", description="Print a list of all tracked characters")
 async def listAll(interaction: discord.Interaction):
     try:
-        await interaction.response.defer(thinking=True)
+        await interaction.response.defer(thinking=True, ephemeral=True)
 
         character_string = "Pico is tracking the following characters:\n\n"
         for db_entry in Character.select().where(Character.guild_id == interaction.guild.id).order_by(Character.realm):
