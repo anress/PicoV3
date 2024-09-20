@@ -108,7 +108,7 @@ async def remove(interaction: discord.Interaction, character_name: str, realm: s
         character_name = character_name.capitalize()
         realm = realm.title()
 
-        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm.lower() == realm))) is not None:
+        if (db_entry := Character.get_or_none((Character.guild_id == interaction.guild.id) & (Character.name == character_name) & (Character.realm == realm))) is not None:
             db_entry: Character
             db_entry.delete_instance()
             await interaction.edit_original_response(
