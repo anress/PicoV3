@@ -90,7 +90,7 @@ def checkIfNewMilestone(score_old, score_new):
     elif score_old < 2500 and score_new >= 2500:
         return "Keystone Hero"
     elif score_old < 3000 and score_new >= 3000:
-        return "3k"
+        return "Keystone Legend"
     elif score_old < 3500 and score_new >= 3500:
         return "3.5k"
     elif score_old < 4000 and score_new >= 4000:
