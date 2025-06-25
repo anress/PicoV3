@@ -35,15 +35,12 @@ class DiscordBotClient(discord.Client):
                 Character.delete().where(Character.guild_id == guild.guild_id).execute()
                 MPlusRun.delete().where(MPlusRun.guild_id == guild.guild_id).execute()
                 guild.delete_instance()
-            self.tree.copy_global_to(guild=guild)
-            await self.tree.sync(guild=guild)
-            logging.info(f"Synchronized command tree with commands {[cmd.name for cmd in self.tree.get_commands(guild=admin_guild)]} to admin servers.")
         logging.info(f"Finished database cleanup.")
              
-        # for admin_guild in ADMIN_GUILDS:
-        #     self.tree.copy_global_to(guild=admin_guild)
-        #     await self.tree.sync(guild=admin_guild)
-        #     logging.info(f"Synchronized command tree with commands {[cmd.name for cmd in self.tree.get_commands(guild=admin_guild)]} to admin servers.")
+        for admin_guild in ADMIN_GUILDS:
+            self.tree.copy_global_to(guild=admin_guild)
+            await self.tree.sync(guild=admin_guild)
+            logging.info(f"Synchronized command tree with commands {[cmd.name for cmd in self.tree.get_commands(guild=admin_guild)]} to admin servers.")
 
         self.task_containers = [
                 Scheduler(self),
