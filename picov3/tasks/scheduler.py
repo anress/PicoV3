@@ -58,7 +58,8 @@ class Scheduler:
                             
                             if db_entry_guild.score_channel_id is not None:                                
                                 score_channel: discord.TextChannel = await guild.fetch_channel(db_entry_guild.score_channel_id)
-                             
+                                logging.info(f"Score old: {score_old}")
+                                logging.info(f"Score new: {score_new}")
                                 if score_old is None:
                                     score_old = 0
                                 achievement = checkIfNewMilestone(score_old, score_new)

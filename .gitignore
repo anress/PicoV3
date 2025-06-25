@@ -7,3 +7,6 @@ __pycache__
 *.json
 *.service
 token.json
+
+.DS_Store
+picov3/.DS_Store
