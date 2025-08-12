@@ -54,7 +54,10 @@ class Scheduler:
                         if response.ok:
                             score_all = response.json().get('mythic_plus_scores_by_season')[0].get('segments').get('all')
                             score_new = score_all.get('score')
-                            score_old = db_entry.score
+                            score_old = db_entry.score or 0
+
+                            if score_old > score_new: 
+                                continue
                             
                             if db_entry_guild.score_channel_id is not None:                                
                                 score_channel: discord.TextChannel = await guild.fetch_channel(db_entry_guild.score_channel_id)
@@ -62,10 +65,12 @@ class Scheduler:
                                 logging.info(f"Score new: {score_new}")
                                 if score_old is None:
                                     score_old = 0
-                                # achievement = checkIfNewMilestone(score_old, score_new)
-                                # if achievement is not None:
-                                    # embed = createScoreEmbed(response.json(), db_entry, achievement, score_all)                                    
-                                    # await score_channel.send(embed=embed) 
+                                achievement = checkIfNewMilestone(score_old, score_new)
+                           
+                                if achievement is not None:
+                                    embed = createScoreEmbed(response.json(), db_entry, achievement, score_all)                                    
+                                    await score_channel.send(embed=embed) 
+                           
                             db_entry.score = score_new
                             db_entry.save()
             logging.info("Finished checking all characters")
