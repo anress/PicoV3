@@ -44,9 +44,9 @@ class Scheduler:
                         
                         logging.info("---- " + db_entry.name + " ----")
                         await get_recent_mplus_runs(db_entry, runs_channel, db_entry_guild.guild_id)
-                        season = "season-tww3"
+                        season = "season-tww-3"
                         url = (f"{getRaiderIOBaseUrlPerChar(db_entry.name, db_entry.realm)}"
-                                f"&fields=mythic_plus_scores_by_season%3A{season}"
+                                f"&fields=mythic_plus_scores_by_season  {season}"
                             )
 
                         response = requests.get(url, headers=HEADERS)
