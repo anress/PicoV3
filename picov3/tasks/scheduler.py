@@ -44,9 +44,9 @@ class Scheduler:
                         
                         logging.info("---- " + db_entry.name + " ----")
                         await get_recent_mplus_runs(db_entry, runs_channel, db_entry_guild.guild_id)
-                       
+                        season = "season-tww3"
                         url = (f"{getRaiderIOBaseUrlPerChar(db_entry.name, db_entry.realm)}"
-                                "&fields=mythic_plus_scores_by_season%3Acurrent"
+                                f"&fields=mythic_plus_scores_by_season%3A{season}"
                             )
 
                         response = requests.get(url, headers=HEADERS)
@@ -62,10 +62,10 @@ class Scheduler:
                                 logging.info(f"Score new: {score_new}")
                                 if score_old is None:
                                     score_old = 0
-                                achievement = checkIfNewMilestone(score_old, score_new)
-                                if achievement is not None:
-                                    embed = createScoreEmbed(response.json(), db_entry, achievement, score_all)                                    
-                                    await score_channel.send(embed=embed) 
+                                # achievement = checkIfNewMilestone(score_old, score_new)
+                                # if achievement is not None:
+                                    # embed = createScoreEmbed(response.json(), db_entry, achievement, score_all)                                    
+                                    # await score_channel.send(embed=embed) 
                             db_entry.score = score_new
                             db_entry.save()
             logging.info("Finished checking all characters")
@@ -101,10 +101,8 @@ async def get_recent_mplus_runs(character: Character, channel: discord.TextChann
                 season = url_parts[4]
                 run_id = url_parts[5].split("-")[0]                
                 
-                # check if run has been previously posted already
-                if (db_entry_run := MPlusRun.get_or_none((MPlusRun.guild_id == character.guild_id) & (MPlusRun.run_id == run_id))) is not None:                    
-                    logging.info(f"Run {db_entry_run.run_id} was previously already added")
-                else: 
+                # check if run hasn't been previously posted already
+                if (db_entry_run := MPlusRun.get_or_none((MPlusRun.guild_id == character.guild_id) & (MPlusRun.run_id == run_id))) is None:                    
                     logging.info(f"Adding run {run_id}")
                     url = f"{LINK_BASE_URL}/api/v1/mythic-plus/run-details?season={season}&id={run_id}"
                     response = requests.get(url, headers=HEADERS)
@@ -241,5 +239,6 @@ def createScoreEmbed(response, character: Character, achievement, score_all):
     
     embed.set_image(url=response.get('thumbnail_url'))
     return embed
+
 
     
